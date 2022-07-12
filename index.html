@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Count Up Sales</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link href="style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="box">
+      <div class="countup-box" id="box-a">
+        <label>today's sales</label>
+        <input type="text" id="input-box-a" />
+      </div>
+      <div class="countup-box" id="box-b">
+        <label>all sales</label>
+        <input type="text" id="input-box-b" />
+      </div>
+      <div class="countup-box" id="box-c">
+        <label>all sales(15%)</label>
+        <input type="text" id="input-box-c" />
+      </div>
+      <div class="countup-box" id="box-d">
+        <label>all sales(23%)</label>
+        <input type="text" id="input-box-d" />
+      </div>
+      <div class="countup-box" id="box-e">
+        <label>all sales(62%)</label>
+        <input type="text" id="input-box-e" />
+      </div>
+    </div>
+
+    <script>
+      const animateCountUp = (options) => {
+        const endVal = options.dailyGrow;
+        const locales = options.locales || "en-US";
+        const style = options.style || "decimal";
+        const currency = options.currency || "USD";
+        let total = options.total || 0;
+
+        const output = options.output || {};
+
+        if (output["box-c"] && output["box-c"].visible) {
+          document.getElementById("box-c").style.display = "flex";
+        } else {
+          document.getElementById("box-c").style.display = "none";
+        }
+        if (output["box-d"] && output["box-d"].visible) {
+          document.getElementById("box-d").style.display = "flex";
+        } else {
+          document.getElementById("box-d").style.display = "none";
+        }
+        if (output["box-e"] && output["box-e"].visible) {
+          document.getElementById("box-e").style.display = "flex";
+        } else {
+          document.getElementById("box-e").style.display = "none";
+        }
+
+        const animationDuration = 86400 * 1000;
+        const frameDuration = 1000 / 60;
+        const totalFrames = Math.round(animationDuration / frameDuration);
+        const easeOutQuad = (t) => t * (2 - t);
+        let frame = 0;
+
+        const d = new Date();
+        const h = d.getUTCHours();
+        const m = d.getUTCMinutes();
+        const s = d.getUTCSeconds();
+        const ms = d.getUTCMilliseconds();
+
+        if (h === 0 && m === 0 && s === 0) {
+          const counter = setInterval(() => {
+            frame++;
+            const progress = easeOutQuad(frame / totalFrames);
+            const currentCount = Math.round(endVal * progress);
+
+            printValues(currentCount, total + currentCount);
+
+            if (frame === totalFrames) {
+              clearInterval(counter);
+              animateCountUp({
+                ...options,
+                total: total + currentCount,
+              });
+            }
+          }, frameDuration);
+        } else {
+          const t0 = h * 60 * 60 * 1000 + m * 60 * 1000 + s * 1000 + ms;
+          startVal = Math.round((endVal * t0) / animationDuration);
+          const duration_ = animationDuration - t0;
+          const totalFrames_ = Math.round(duration_ / frameDuration);
+
+          const counter = setInterval(() => {
+            frame++;
+            const progress = easeOutQuad(frame / totalFrames_);
+            const currentCount =
+              startVal + Math.round((endVal - startVal) * progress);
+
+            printValues(currentCount, total + currentCount);
+
+            if (frame === totalFrames_) {
+              clearInterval(counter);
+              animateCountUp({
+                ...options,
+                total: total + currentCount,
+              });
+            }
+          }, frameDuration);
+        }
+        const printValues = (dailyValue, totalValue) => {
+          document.getElementById("input-box-a").value = dailyValue.toLocaleString(
+            locales,
+            {
+              style: style,
+              currency: currency,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }
+          );
+          document.getElementById("input-box-b").value = totalValue.toLocaleString(
+            locales,
+            {
+              style: style,
+              currency: currency,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }
+          );
+          if (output["box-c"] && output["box-c"].visible) {
+            document.getElementById("input-box-c").value = (
+              totalValue * 0.15
+            ).toLocaleString(locales, {
+              style: style,
+              currency: currency,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            });
+          }
+          if (output["box-d"] && output["box-d"].visible) {
+            document.getElementById("input-box-d").value = (
+              totalValue * 0.23
+            ).toLocaleString(locales, {
+              style: style,
+              currency: currency,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            });
+          }
+          if (output["box-e"] && output["box-e"].visible) {
+            document.getElementById("input-box-e").value = (
+              totalValue * 0.62
+            ).toLocaleString(locales, {
+              style: style,
+              currency: currency,
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            });
+          }
+        };
+      };
+
+      animateCountUp({
+        dailyGrow: 1000000,
+        locales: "en-US",
+        style: "currency", // "decimal", "currency"
+        currency: "USD", // USD, EUR, ...
+        output: {
+          "box-c": { visible: true },
+          "box-d": { visible: true },
+          "box-e": { visible: true },
+        },
+      });
+
+      // locales
+      // https://www.w3schools.com/jsref/jsref_tolocalestring.asp,
+      // https://stackoverflow.com/questions/3191664/list-of-all-locales-and-their-short-codes
+
+      // currency codes
+      // https://en.wikipedia.org/wiki/ISO_4217
+    </script>
+  </body>
+</html>
