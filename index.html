@@ -36,12 +36,14 @@
 
     <script>
       const animateCountUp = (options) => {
+        const initialVal = options.initialValue || 0;
         const endVal = options.dailyGrow;
         const locales = options.locales || "en-US";
         const style = options.style || "decimal";
         const currency = options.currency || "USD";
         let total = options.total || 0;
-
+        total = total + initialVal;
+        
         const output = options.output || {};
 
         if (output["box-c"] && output["box-c"].visible) {
@@ -84,6 +86,7 @@
               clearInterval(counter);
               animateCountUp({
                 ...options,
+                initialValue: 0,
                 total: total + currentCount,
               });
             }
@@ -106,30 +109,27 @@
               clearInterval(counter);
               animateCountUp({
                 ...options,
+                initialValue: 0,
                 total: total + currentCount,
               });
             }
           }, frameDuration);
         }
         const printValues = (dailyValue, totalValue) => {
-          document.getElementById("input-box-a").value = dailyValue.toLocaleString(
-            locales,
-            {
+          document.getElementById("input-box-a").value =
+            dailyValue.toLocaleString(locales, {
               style: style,
               currency: currency,
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            }
-          );
-          document.getElementById("input-box-b").value = totalValue.toLocaleString(
-            locales,
-            {
+            });
+          document.getElementById("input-box-b").value =
+            totalValue.toLocaleString(locales, {
               style: style,
               currency: currency,
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
-            }
-          );
+            });
           if (output["box-c"] && output["box-c"].visible) {
             document.getElementById("input-box-c").value = (
               totalValue * 0.15
@@ -164,7 +164,8 @@
       };
 
       animateCountUp({
-        dailyGrow: 1000000,
+        initialValue: 180 * 1000000000,
+        dailyGrow: 1000000000,
         locales: "en-US",
         style: "currency", // "decimal", "currency"
         currency: "USD", // USD, EUR, ...
