@@ -43,7 +43,7 @@
         const currency = options.currency || "USD";
         let total = options.total || 0;
         total = total + initialVal;
-        
+
         const output = options.output || {};
 
         if (output["box-c"] && output["box-c"].visible) {
@@ -170,9 +170,9 @@
         style: "currency", // "decimal", "currency"
         currency: "USD", // USD, EUR, ...
         output: {
-          "box-c": { visible: true },
-          "box-d": { visible: true },
-          "box-e": { visible: true },
+          "box-c": { visible: false },
+          "box-d": { visible: false },
+          "box-e": { visible: false },
         },
       });
 
